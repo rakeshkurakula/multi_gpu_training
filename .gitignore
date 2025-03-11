@@ -172,3 +172,11 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+data/*
+.venv/*
+.mypy_cache/*
+.pytest_cache/*
+.ruff_cache/*
+.pytype/*
+.pyre/*
+.mypy_cache/*
