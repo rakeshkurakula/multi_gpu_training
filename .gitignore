@@ -180,3 +180,4 @@ data/*
 .pytype/*
 .pyre/*
 .mypy_cache/*
+.DS_Store
