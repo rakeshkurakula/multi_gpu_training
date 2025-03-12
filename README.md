@@ -1,4 +1,4 @@
-# Multi-GPU Training
+# Multi-GPU Training with PyTorch Lightning
 
 This repository demonstrates the transition from vanilla PyTorch to PyTorch Lightning for efficient multi-GPU training.
 
@@ -18,6 +18,7 @@ PyTorch Lightning provides a high-level interface that abstracts away these comp
 ## Repository Structure
 
 - `pytorch_lightning.ipynb`: Jupyter notebook demonstrating the transition from PyTorch to PyTorch Lightning
+- `multi_gpu_training.ipynb`: Jupyter notebook focusing on multi-GPU training strategies
 - Various example models and training scripts
 
 ## PyTorch vs. PyTorch Lightning
@@ -64,7 +65,7 @@ jupyter notebook pytorch_lightning.ipynb
 
 3. Explore the transition from PyTorch to PyTorch Lightning and multi-GPU training examples.
 
-## Multi-GPU Training
+## Multi-GPU Training Strategies
 
 PyTorch Lightning makes multi-GPU training straightforward:
 
@@ -75,12 +76,41 @@ trainer = pl.Trainer(accelerator="gpu", devices=2)  # Use 2 GPUs
 
 No need to manually implement DistributedDataParallel or DataParallel - Lightning handles it automatically!
 
+### Data Parallel (DP)
+
+```python
+trainer = pl.Trainer(accelerator="gpu", devices=2, strategy="dp")
+```
+
+**Process in DP strategy:**
+- The central machine replicates the model to all GPUs
+- Individual GPUs process their portion of the data and communicate outputs back to the central machine
+- The central machine computes loss and gradients, then updates the model weights
+- Updated weights are sent back to individual GPUs
+
+**Limitation:** The model is still trained on one device, which can become a bottleneck.
+
+### Distributed Data Parallel (DDP)
+
+```python
+trainer = pl.Trainer(accelerator="gpu", devices=2, strategy="ddp")
+```
+
+**Process in DDP strategy:**
+- The model is replicated to all GPUs (happens once)
+- Individual GPUs compute gradients independently
+- Gradients are communicated between GPUs, and all replicas get updated
+- The central machine is never overloaded with model outputs
+
+DDP is generally more efficient than DP for multi-GPU training as it distributes both the data and computation across devices.
+
 ## Advanced Features
 
 - **Gradient Accumulation**: `trainer = pl.Trainer(accumulate_grad_batches=4)`
 - **Mixed Precision**: `trainer = pl.Trainer(precision=16)`
 - **Checkpointing**: `trainer = pl.Trainer(callbacks=[ModelCheckpoint()])`
 - **Early Stopping**: `trainer = pl.Trainer(callbacks=[EarlyStopping()])`
+- **Custom Callbacks**: Create custom callbacks to monitor training progress
 
 ## Conclusion
 
@@ -91,3 +121,4 @@ PyTorch Lightning significantly simplifies the implementation of multi-GPU train
 - [PyTorch Lightning Documentation](https://lightning.ai/docs/pytorch/stable/)
 - [PyTorch Documentation](https://pytorch.org/docs/stable/index.html)
 - [Distributed Training Guide](https://pytorch.org/tutorials/intermediate/ddp_tutorial.html)
+- [Accurate, Large Minibatch SGD Paper](https://arxiv.org/pdf/1706.02677)
