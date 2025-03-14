@@ -9,18 +9,18 @@ This repository demonstrates the transition from vanilla PyTorch to PyTorch Ligh
 
 In the world of deep learning, time is both a constraint and a resource. As our models grow in complexity and our datasets expand in size, the time required to train these models becomes a critical bottleneck. What started as a simple experiment on a single GPU quickly evolved into a quest for efficiency and scale.
 
-Our journey began with a simple question: **How can we leverage multiple GPUs to accelerate our training process?**
+Our journey began with a simple question: **How can I leverage multiple GPUs to accelerate our training process?**
 
 ## The Exploration: Benchmarking Different Strategies
 
-We embarked on a systematic exploration of multi-GPU training strategies using PyTorch Lightning. Our goal was to understand the performance characteristics, trade-offs, and optimal configurations for different workloads.
+I embarked on a systematic exploration of multi-GPU training strategies using PyTorch Lightning. Our goal was to understand the performance characteristics, trade-offs, and optimal configurations for different workloads.
 
 
 ### Throughput Comparison
 
 ![Throughput Comparison](./benchmark_results/images/throughput_comparison.png)
 
-Throughput - measured in samples processed per second - revealed even more insights. **DDP consistently outperformed DP across all configurations**, with the gap widening as we added more GPUs. With 4 GPUs and a batch size of 128, DDP achieved a remarkable throughput of over 33,000 samples per second - a game-changer for large dataset training.
+Throughput - measured in samples processed per second - revealed even more insights. **DDP consistently outperformed DP across all configurations**, with the gap widening as I added more GPUs. With 4 GPUs and a batch size of 128, DDP achieved a remarkable throughput of over 33,000 samples per second - a game-changer for large dataset training.
 
 The relationship between batch size and throughput was particularly interesting. Doubling the batch size didn't just increase throughput proportionally - it often led to super-linear improvements due to better GPU utilization.
 
@@ -28,11 +28,11 @@ The relationship between batch size and throughput was particularly interesting.
 
 ![Scaling Efficiency](./benchmark_results/images/scaling_efficiency.png)
 
-Perhaps the most revealing metric was scaling efficiency - how close we came to the ideal linear speedup as we added more GPUs. The chart above shows the stark difference between DP and DDP strategies.
+Perhaps the most revealing metric was scaling efficiency - how close I came to the ideal linear speedup as I added more GPUs. The chart above shows the stark difference between DP and DDP strategies.
 
 **DDP achieved near-linear scaling** (the dotted line represents perfect scaling), maintaining over 90% efficiency even with 4 GPUs. In contrast, DP's efficiency dropped to around 60% with 4 GPUs, highlighting the communication overhead inherent in this approach.
 
-## The Lessons: What We Learned
+## The Lessons: What I Learned
 
 Our benchmarking journey revealed several key insights:
 
@@ -46,7 +46,7 @@ Our benchmarking journey revealed several key insights:
 
 5. **PyTorch Lightning Simplifies**: The framework abstracts away much of the complexity of distributed training, allowing us to focus on the model rather than the infrastructure.
 
-## The Implementation: How We Did It
+## The Implementation: How I Did It
 
 Implementing multi-GPU training with PyTorch Lightning was surprisingly straightforward. Here's a simplified version of our approach:
 
@@ -72,11 +72,11 @@ trainer.fit(model, train_loader, val_loader)
 
 The beauty of PyTorch Lightning is that the model code remains unchanged - only the Trainer configuration needs to be adjusted.
 
-## The Future: Where We Go From Here
+## The Future: Where I Go From Here
 
 Our multi-GPU training journey has opened new possibilities:
 
-- **Larger Models**: With the efficiency gains from DDP, we can now train larger, more complex models.
+- **Larger Models**: With the efficiency gains from DDP, I can now train larger, more complex models.
 
 - **Faster Iteration**: Reduced training time means more experiments, faster debugging, and quicker innovation.
 
