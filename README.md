@@ -3,96 +3,96 @@
 This repository demonstrates the transition from vanilla PyTorch to PyTorch Lightning for efficient multi-GPU training.
 
 ## Branchmarking results
-+ # Multi-GPU Training Journey: From Single GPU to Distributed Excellence
+# Multi-GPU Training Journey: From Single GPU to Distributed Excellence
 
-+ ## The Challenge: Scaling Deep Learning Training
-+ 
-+ In the world of deep learning, time is both a constraint and a resource. As our models grow in complexity and our datasets expand in size, the time required to train these models becomes a critical bottleneck. What started as a simple experiment on a single GPU quickly evolved into a quest for efficiency and scale.
-+ 
-+ Our journey began with a simple question: **How can we leverage multiple GPUs to accelerate our training process?**
-+ 
-+ ## The Exploration: Benchmarking Different Strategies
-+ 
-+ We embarked on a systematic exploration of multi-GPU training strategies using PyTorch Lightning. Our goal was to understand the performance characteristics, trade-offs, and optimal configurations for different workloads.
-+ 
-+ 
-+ ### Throughput Comparison
-+ 
-+ ![Throughput Comparison](./benchmark_results/images/throughput_comparison.png)
-+ 
-+ Throughput - measured in samples processed per second - revealed even more insights. **DDP consistently outperformed DP across all configurations**, with the gap widening as we added more GPUs. With 4 GPUs and a batch size of 128, DDP achieved a remarkable throughput of over 33,000 samples per second - a game-changer for large dataset training.
-+ 
-+ The relationship between batch size and throughput was particularly interesting. Doubling the batch size didn't just increase throughput proportionally - it often led to super-linear improvements due to better GPU utilization.
-+ 
-+ ### Scaling Efficiency
-+ 
-+ ![Scaling Efficiency](./benchmark_results/images/scaling_efficiency.png)
-+ 
-+ Perhaps the most revealing metric was scaling efficiency - how close we came to the ideal linear speedup as we added more GPUs. The chart above shows the stark difference between DP and DDP strategies.
-+ 
-+ **DDP achieved near-linear scaling** (the dotted line represents perfect scaling), maintaining over 90% efficiency even with 4 GPUs. In contrast, DP's efficiency dropped to around 60% with 4 GPUs, highlighting the communication overhead inherent in this approach.
-+ 
-+ ## The Lessons: What We Learned
-+ 
-+ Our benchmarking journey revealed several key insights:
-+ 
-+ 1. **Strategy Matters**: DDP consistently outperforms DP for multi-GPU training, with the gap widening as you add more GPUs.
-+ 
-+ 2. **Batch Size Impact**: Larger batch sizes improve GPU utilization and throughput, but there's a sweet spot before diminishing returns (or even performance degradation) set in.
-+ 
-+ 3. **Memory Efficiency**: DDP is more memory-efficient than DP, allowing for larger models or batch sizes on the same hardware.
-+ 
-+ 4. **Scaling Isn't Free**: While adding more GPUs generally improves performance, the communication overhead increases with each additional GPU, making it crucial to choose the right strategy.
-+ 
-+ 5. **PyTorch Lightning Simplifies**: The framework abstracts away much of the complexity of distributed training, allowing us to focus on the model rather than the infrastructure.
-+ 
-+ ## The Implementation: How We Did It
-+ 
-+ Implementing multi-GPU training with PyTorch Lightning was surprisingly straightforward. Here's a simplified version of our approach:
-+ 
-+ ```python
-+ import pytorch_lightning as pl
-+ 
-+ # Define your model as a LightningModule
-+ class MyModel(pl.LightningModule):
-+     # ... model definition ...
-+ 
-+ # Single GPU training
-+ trainer = pl.Trainer(accelerator="gpu", devices=1)
-+ 
-+ # Multi-GPU training with Data Parallel
-+ trainer = pl.Trainer(accelerator="gpu", devices=4, strategy="dp")
-+ 
-+ # Multi-GPU training with Distributed Data Parallel
-+ trainer = pl.Trainer(accelerator="gpu", devices=4, strategy="ddp")
-+ 
-+ # Train the model
-+ trainer.fit(model, train_loader, val_loader)
-+ ```
-+ 
-+ The beauty of PyTorch Lightning is that the model code remains unchanged - only the Trainer configuration needs to be adjusted.
-+ 
-+ ## The Future: Where We Go From Here
-+ 
-+ Our multi-GPU training journey has opened new possibilities:
-+ 
-+ - **Larger Models**: With the efficiency gains from DDP, we can now train larger, more complex models.
-+ 
-+ - **Faster Iteration**: Reduced training time means more experiments, faster debugging, and quicker innovation.
-+ 
-+ - **Multi-Node Training**: The next frontier is scaling beyond a single machine to multiple nodes in a cluster.
-+ 
-+ - **Mixed Precision**: Combining multi-GPU training with mixed precision offers even greater performance gains.
-+ 
-+ ## Run Your Own Benchmarks
-+ 
-+ Inspired to start your own multi-GPU journey? Run our benchmark script to see how different strategies perform on your hardware:
-+ 
-+ ```bash
-+ python benchmark.py --strategies dp ddp --gpus 1 2 4 --batch-sizes 64 128 256
-+ ```
-+ 
-+ The script will generate detailed visualizations and recommendations tailored to your specific hardware configuration.
+## The Challenge: Scaling Deep Learning Training
+
+In the world of deep learning, time is both a constraint and a resource. As our models grow in complexity and our datasets expand in size, the time required to train these models becomes a critical bottleneck. What started as a simple experiment on a single GPU quickly evolved into a quest for efficiency and scale.
+
+Our journey began with a simple question: **How can we leverage multiple GPUs to accelerate our training process?**
+
+## The Exploration: Benchmarking Different Strategies
+
+We embarked on a systematic exploration of multi-GPU training strategies using PyTorch Lightning. Our goal was to understand the performance characteristics, trade-offs, and optimal configurations for different workloads.
+
+
+### Throughput Comparison
+
+![Throughput Comparison](./benchmark_results/images/throughput_comparison.png)
+
+Throughput - measured in samples processed per second - revealed even more insights. **DDP consistently outperformed DP across all configurations**, with the gap widening as we added more GPUs. With 4 GPUs and a batch size of 128, DDP achieved a remarkable throughput of over 33,000 samples per second - a game-changer for large dataset training.
+
+The relationship between batch size and throughput was particularly interesting. Doubling the batch size didn't just increase throughput proportionally - it often led to super-linear improvements due to better GPU utilization.
+
+### Scaling Efficiency
+
+![Scaling Efficiency](./benchmark_results/images/scaling_efficiency.png)
+
+Perhaps the most revealing metric was scaling efficiency - how close we came to the ideal linear speedup as we added more GPUs. The chart above shows the stark difference between DP and DDP strategies.
+
+**DDP achieved near-linear scaling** (the dotted line represents perfect scaling), maintaining over 90% efficiency even with 4 GPUs. In contrast, DP's efficiency dropped to around 60% with 4 GPUs, highlighting the communication overhead inherent in this approach.
+
+## The Lessons: What We Learned
+
+Our benchmarking journey revealed several key insights:
+
+1. **Strategy Matters**: DDP consistently outperforms DP for multi-GPU training, with the gap widening as you add more GPUs.
+
+2. **Batch Size Impact**: Larger batch sizes improve GPU utilization and throughput, but there's a sweet spot before diminishing returns (or even performance degradation) set in.
+
+3. **Memory Efficiency**: DDP is more memory-efficient than DP, allowing for larger models or batch sizes on the same hardware.
+
+4. **Scaling Isn't Free**: While adding more GPUs generally improves performance, the communication overhead increases with each additional GPU, making it crucial to choose the right strategy.
+
+5. **PyTorch Lightning Simplifies**: The framework abstracts away much of the complexity of distributed training, allowing us to focus on the model rather than the infrastructure.
+
+## The Implementation: How We Did It
+
+Implementing multi-GPU training with PyTorch Lightning was surprisingly straightforward. Here's a simplified version of our approach:
+
+```python
+import pytorch_lightning as pl
+
+# Define your model as a LightningModule
+class MyModel(pl.LightningModule):
+    # ... model definition ...
+
+# Single GPU training
+trainer = pl.Trainer(accelerator="gpu", devices=1)
+
+# Multi-GPU training with Data Parallel
+trainer = pl.Trainer(accelerator="gpu", devices=4, strategy="dp")
+
+# Multi-GPU training with Distributed Data Parallel
+trainer = pl.Trainer(accelerator="gpu", devices=4, strategy="ddp")
+
+# Train the model
+trainer.fit(model, train_loader, val_loader)
+```
+
+The beauty of PyTorch Lightning is that the model code remains unchanged - only the Trainer configuration needs to be adjusted.
+
+## The Future: Where We Go From Here
+
+Our multi-GPU training journey has opened new possibilities:
+
+- **Larger Models**: With the efficiency gains from DDP, we can now train larger, more complex models.
+
+- **Faster Iteration**: Reduced training time means more experiments, faster debugging, and quicker innovation.
+
+- **Multi-Node Training**: The next frontier is scaling beyond a single machine to multiple nodes in a cluster.
+
+- **Mixed Precision**: Combining multi-GPU training with mixed precision offers even greater performance gains.
+
+## Run Your Own Benchmarks
+
+Inspired to start your own multi-GPU journey? Run our benchmark script to see how different strategies perform on your hardware:
+
+```bash
+python benchmark.py --strategies dp ddp --gpus 1 2 4 --batch-sizes 64 128 256
+```
+
+The script will generate detailed visualizations and recommendations tailored to your specific hardware configuration.
 
 
 ## Overview
