@@ -181,3 +181,4 @@ data/*
 .pyre/*
 .mypy_cache/*
 .DS_Store
+checkpoints/*
